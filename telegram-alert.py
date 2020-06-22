@@ -1,3 +1,4 @@
+import time
 from telegram.ext import Updater, CommandHandler
 
 ### SETTINGS ###
@@ -10,10 +11,14 @@ OWNER_ID = 0
 ### FUNCTIONS ###
 
 def get_ip_address():
-    import socket    
-    hostname = socket.gethostname()    
-    ip_address = socket.gethostbyname(hostname)
-    return str(ip_address)
+    # Adapted from https://stackoverflow.com/a/30990617
+    try:
+        import socket    
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80)) # Attempt to connect to Google DNS server
+        return s.getsockname()[0]
+    except:
+        return False
 
 def start(update, context):
     id = update.message.from_user.id
@@ -26,14 +31,18 @@ def start(update, context):
 
 ### MAIN ###
 
+ip = get_ip_address()
+while ip == False:
+    print("Network not available... waiting 1 second...")
+    time.sleep(1)
+    ip = get_ip_address()
+
 updater = Updater(token=TELEGRAM_TOKEN, use_context=True)
 start_handler = CommandHandler('start', start)
-hello_handler = CommandHandler('hello', start)
 updater.dispatcher.add_handler(start_handler)
 updater.start_polling() # Start the bot (non-blocking)
 if OWNER_ID > 0:
     print("Telegram bot is running... Sending a message to my owner.")
-    ip = get_ip_address()
     updater.bot.send_message(chat_id=OWNER_ID, text=f"Raspberry Pi has started. My IP address is {ip}")
 else:
     print("Telegram bot is running... Send a Telegram /start command to initiate.")

@@ -4,6 +4,8 @@ A script for Raspberry Pi to announce it's IP address via Telegram on system sta
 
 It is useful to be able to connect remotely to your Raspberry Pi via VNC or SSH, but to do so you need to know the IP address of your Raspberry Pi. This program will create a Telegram bot that will send you it's IP address when your Raspberry Pi is turned on.
 
+Once completed, you should be able to use the IP address provided by your telegram bot to connect to your Raspberry Pi via [VNC Viewer](https://www.realvnc.com/en/connect/download/viewer/)
+
 # Setup
 
 ## Step 1 - Chat with the Bot Father
@@ -23,7 +25,20 @@ It is useful to be able to connect remotely to your Raspberry Pi via VNC or SSH,
 * Search for your bot on Telegram and send it a `/start` message. It will reply with your Telegram ID number.
 * Add your Telegram ID number to the `OWNER_ID` of the Python file. This will ensure that it only sends the IP address to you.
 
+## Step 3 - Check VNC enabled on your Raspberry Pi
+
+* From the main Raspberry Pi menu, select Preferences / Raspberry Pi Configuration
+* Open Interfaces tab
+* Enable VNC and SSH
+
 ## Step 3 - Set your Raspberry Pi to run the Python file on start up
+
+* Open a Raspberry Pi terminal
+* Install the Telegram Python package with the following command
+
+```bash
+sudo pip3 install python-telegram-bot
+```
 
 * Use a text editor to open your `/etc/rc.local` file. From the terminal this can be done with 
 
@@ -36,7 +51,7 @@ sudo nano /etc/rc.local
 * Add this line to execute your Pyhton script
 
 ```bash
-python3 /home/pi/telegram-alert.py
+/usr/bin/python3 /home/pi/telegram-alert.py
 ```
 
 ## Step 4 - Customise your Telegram bot
